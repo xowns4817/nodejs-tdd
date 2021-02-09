@@ -1,5 +1,7 @@
 # nodejs-tdd
 nodejs-express 기반 testCode 작성 ( tdd )
+# testCode 작성 순서
+- testCode를 먼저 작성하고 비지니스 로직을 작성한다.
 
 ## 단위 테스트 (함수의 기능 테스트)
 - 모카(mocha) : 테스트 코드를 돌려주는 테스트 러너
