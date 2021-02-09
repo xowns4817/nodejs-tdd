@@ -2,7 +2,7 @@
 const should = require('should');
 const app = require('../../index');
 const request = require('supertest');
-
+const models = require('../../model/models');
 /**
  * GET /users
  * - success
@@ -13,7 +13,16 @@ const request = require('supertest');
  *  - offset이 숫자형이 아니면 400을 응답한다.
  *
  */
+// only를 걸면 특정 api만 테스트 가능
 describe('GET /users', ()=> {
+    const users = [
+        {name: 'kimCoding'},
+        {name: 'ktj'},
+        {name: 'tj'}
+    ];
+    before(()=>models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users)); // 테스트 용도로 bulkCreate
+
     describe('성공시', ()=> {
         it('유저 객체를 담은 배열로 응답한다.', (done)=> {
             request(app)
@@ -56,6 +65,13 @@ describe('GET /users', ()=> {
  *
  */
 describe('GET /user/:id', ()=> {
+    const users = [
+        {name: 'kimCoding'},
+        {name: 'ktj'},
+        {name: 'tj'}
+    ];
+    before(()=>models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users)); // 테스트 용도로 bulkCreate
     describe('성공시', ()=> {
         it('id가 1인 유저 객체를 반환한다.', (done)=> {
             request(app)
@@ -92,7 +108,13 @@ describe('GET /user/:id', ()=> {
  *   - id가 숫자가 아닐경우 400으로 응답한다.
  */
 describe('DELETE /user/:id', ()=> {
-
+    const users = [
+        {name: 'kimCoding'},
+        {name: 'ktj'},
+        {name: 'tj'}
+    ];
+    before(()=>models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users)); // 테스트 용도로 bulkCreate
     describe('성공시', ()=> {
         it('204를 응답한다', (done)=> {
             request(app)
@@ -124,13 +146,21 @@ describe('DELETE /user/:id', ()=> {
  *   - name이 중복일 경우 409를 반환한다.
  */
 describe('POST /users', ()=> {
+    const users = [
+        {name: 'kimCoding'},
+        {name: 'ktj'},
+        {name: 'tj'}
+    ];
+    before(()=>models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users)); // 테스트 용도로 bulkCreate
+
+    let name = 'ktj9418';
+    let body;
     describe('성공시', ()=> {
-        let name = 'kimCoding';
-        let body;
-        before(done=> {
+        before((done)=> {
             request(app)
                 .post('/users')
-                .send({name})
+                .send({name: name})
                 .expect(201)
                 .end((err, res) => {
                     body = res.body;
@@ -156,7 +186,7 @@ describe('POST /users', ()=> {
         it('name이 중복일 경우 409를 반환한다.', (done)=> {
             request(app)
                 .post('/users')
-                .send({name: 'kimCoding'})
+                .send({name})
                 .expect(409)
                 .end(done);
         })
@@ -174,9 +204,16 @@ describe('POST /users', ()=> {
  *   - 이름이 중복일 경우 409 응답
  */
 describe('PUT /users/:id', ( )=> {
+    const users = [
+        {name: 'kimCoding'},
+        {name: 'ktj'},
+        {name: 'tj'}
+    ];
+    before(()=>models.sequelize.sync({force: true}));
+    before(()=> models.User.bulkCreate(users)); // 테스트 용도로 bulkCreate
     describe('성공시', ()=> {
         it('변경된 name을 응답한다.', (done)=> {
-            const name = 'ktj';
+            const name = 'good';
             request(app)
                 .put('/users/2')
                 .expect(200)
@@ -212,7 +249,7 @@ describe('PUT /users/:id', ( )=> {
         it('이름이 중복일 경우 409 응답', (done) => {
             request(app)
                 .put('/users/2')
-                .send({name: 'taejoon'})
+                .send({name: 'kimCoding'})
                 .expect(409)
                 .end(done);
         });
